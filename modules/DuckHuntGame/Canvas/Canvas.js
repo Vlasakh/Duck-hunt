@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import Button from '@material-ui/core/Button';
+import useSound from 'use-sound';
 import Stats from '../Stats';
 import { useDuckHuntGame } from '../useDuckHuntGame';
 import styles from './Canvas.module.css';
@@ -15,6 +16,8 @@ const Canvas = () => {
   const duckHitsRef = useRef(0);
   const { startGame, stopGame, sendGameStats } = useDuckHuntGame();
 
+  const [duckQuackSnd, quackSndControls] = useSound('/quack-quack.mp3');
+  const [awpSnd] = useSound('/awp.mp3');
   const sprite = useRef(new Image());
 
   const START_POINT = -70;
@@ -24,7 +27,7 @@ const Canvas = () => {
   const DUCK_HEIGHT = 59;
   const FLY_FRAME_1 = 0;
   const FLY_FRAME_2 = 70;
-  const SHOT_FRAME = 140;
+  const HIT_FRAME = 140;
   const ROUND_TIME = 6;
   const canvasRef = useRef(null);
 
@@ -69,6 +72,13 @@ const Canvas = () => {
   };
 
   const startRound = () => {
+    roundsRef.current = rounds;
+    if (!roundsRef.current) {
+      console.log(roundsRef);
+      setRounds((rounds) => rounds + 1);
+      roundsRef.current++;
+    }
+    duckQuackSnd();
     y.current = Math.floor(Math.random() * (CANVAS_HEIGHT - DUCK_HEIGHT));
     render();
 
@@ -107,8 +117,9 @@ const Canvas = () => {
 
     if (isDuckHit) {
       stopAnimation();
-      frame.current = SHOT_FRAME;
-
+      quackSndControls.stop();
+      awpSnd();
+      frame.current = HIT_FRAME;
       setDuckHits((duckHits) => duckHits + 1);
       duckHitsRef.current++;
 
