@@ -9,9 +9,11 @@ const CANVAS_HEIGHT = typeof window === 'undefined' ? 0 : window.innerHeight - 1
 
 const Canvas = () => {
   const [isPlay, setPlay] = useState(false);
-  const [rounds, setRounds] = useState(0);
+  const [rounds, setRounds] = useState(1);
   const [duckHits, setDuckHits] = useState(0);
-  const { startGame, stopGame } = useDuckHuntGame();
+  const roundsRef = useRef(1);
+  const duckHitsRef = useRef(0);
+  const { startGame, stopGame, sendGameStats } = useDuckHuntGame();
 
   const sprite = useRef(new Image());
 
@@ -26,8 +28,9 @@ const Canvas = () => {
   const ROUND_TIME = 6;
   const canvasRef = useRef(null);
 
-  let moveInterval = useRef(null);
-  let toggleFrameInterval = useRef(null);
+  const moveInterval = useRef(null);
+  const toggleFrameInterval = useRef(null);
+  const roundTimer = useRef(null);
   let frame = useRef(null);
   let cursorX = 0;
   let cursorY = 0;
@@ -59,6 +62,8 @@ const Canvas = () => {
       if (isDuckFinished) {
         x.current = START_POINT;
         stopAnimation();
+
+        sendGameStats({ rounds: roundsRef.current, duckHits: duckHitsRef.current });
       }
     }, TIME_STEP);
   };
@@ -68,14 +73,15 @@ const Canvas = () => {
     render();
 
     startAnimation();
-    const roundTimer = setInterval(() => {
+    roundTimer.current = setInterval(() => {
       roundTime -= 1;
 
       if (roundTime === 0) {
         roundTime = ROUND_TIME;
         setRounds((rounds) => rounds + 1);
+        roundsRef.current++;
         startRound();
-        clearInterval(roundTimer);
+        clearInterval(roundTimer.current);
       }
     }, 1000);
   };
@@ -84,6 +90,13 @@ const Canvas = () => {
     startGame(() => {
       setPlay(true);
     });
+
+  const handleStopClick = () => {
+    x.current = START_POINT;
+    stopAnimation();
+    clearInterval(roundTimer.current);
+    setPlay(false);
+  };
 
   const hitDuck = () => {
     const isDuckHit =
@@ -95,7 +108,11 @@ const Canvas = () => {
     if (isDuckHit) {
       stopAnimation();
       frame.current = SHOT_FRAME;
+
       setDuckHits((duckHits) => duckHits + 1);
+      duckHitsRef.current++;
+
+      sendGameStats({ rounds: roundsRef.current, duckHits: duckHitsRef.current });
 
       setTimeout(() => {
         x.current = START_POINT;
@@ -153,12 +170,7 @@ const Canvas = () => {
           Start game
         </Button>
       ) : (
-        <Button
-          variant={'contained'}
-          onClick={() => {
-            console.log('finish the game');
-          }}
-        >
+        <Button variant={'contained'} onClick={handleStopClick}>
           Finish the game
         </Button>
       )}

@@ -1,13 +1,14 @@
+import { useRef } from 'react';
 import io from 'socket.io-client';
-import { INIT_GAME, START_GAME } from '../../common/socketConstants';
+import { DUCK_HUNT_STATISTICS, INIT_GAME, START_GAME } from '../../common/socketConstants';
 
 export function useDuckHuntGame() {
-  let socket;
+  const socket = useRef();
 
   function startGame(startCallback) {
-    if (!socket?.connected) {
-      if (socket) {
-        socket.connect();
+    if (!socket.current?.connected) {
+      if (socket.current) {
+        socket.current.connect();
       } else {
         socketInit(startCallback);
       }
@@ -16,30 +17,35 @@ export function useDuckHuntGame() {
 
   async function socketInit(startCallback) {
     await fetch('/api/duck-hunt');
-    socket = io();
+    socket.current = io();
 
-    socket.on('connect', () => {
+    socket.current.on('connect', () => {
       console.log('connected');
-      socket.emit(INIT_GAME, 'init');
+      socket.current.emit(INIT_GAME, 'init');
     });
 
-    socket.on(START_GAME, () => {
+    socket.current.on(START_GAME, () => {
       console.log('❗on start');
       startCallback();
     });
   }
 
   function stopGame() {
-    if (socket?.connected) {
-      socket.disconnect();
-      socket = null;
+    if (socket.current?.connected) {
+      socket.current.disconnect();
+      socket.current = null;
     }
-    console.log('❗socket', socket);
+    console.log('❗socket.current', socket.current);
+  }
+
+  function sendGameStats(stats) {
+    socket.current.emit(DUCK_HUNT_STATISTICS, JSON.stringify(stats));
   }
 
   return {
     socket,
     startGame,
     stopGame,
+    sendGameStats,
   };
 }

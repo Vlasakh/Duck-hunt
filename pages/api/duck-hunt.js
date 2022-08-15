@@ -18,6 +18,10 @@ const SocketHandler = (req, res) => {
         console.log('❗msg', msg);
         setTimeout(() => socket.emit(START_GAME, 'run'), 1000);
       });
+
+      socket.on(DUCK_HUNT_STATISTICS, (msg) => {
+        console.log('❗game stats', JSON.parse(msg));
+      });
     });
   }
   res.end();
