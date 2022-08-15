@@ -15,7 +15,8 @@
     "react": "18.2.0",
     "react-dom": "18.2.0",
     "socket.io": "^4.5.1",
-    "socket.io-client": "^4.5.1"
+    "socket.io-client": "^4.5.1",
+    "use-sound": "^4.0.1"
   },
   "devDependencies": {
     "@trivago/prettier-plugin-sort-imports": "^3.3.0",
