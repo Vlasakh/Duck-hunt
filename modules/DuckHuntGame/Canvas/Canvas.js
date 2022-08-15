@@ -1,16 +1,17 @@
 import { useEffect, useRef, useState } from 'react';
 import Button from '@material-ui/core/Button';
 import Stats from '../Stats';
-import duckImage from '../sprites/duck_hunt_sprite.png';
+import { useDuckHuntGame } from '../useDuckHuntGame';
 import styles from './Canvas.module.css';
 
 const CANVAS_WIDTH = typeof window === 'undefined' ? 0 : window.innerWidth - 40;
 const CANVAS_HEIGHT = typeof window === 'undefined' ? 0 : window.innerHeight - 160;
 
 const Canvas = () => {
-  const [isPlay, setPlay] = useState(true);
+  const [isPlay, setPlay] = useState(false);
   const [rounds, setRounds] = useState(0);
   const [duckHits, setDuckHits] = useState(0);
+  const { startGame, stopGame } = useDuckHuntGame();
 
   const sprite = useRef(new Image());
 
@@ -52,6 +53,7 @@ const Canvas = () => {
 
     moveInterval.current = setInterval(() => {
       x.current += STEP;
+      // console.log('❗x.current', x.current);
 
       const isDuckFinished = x.current >= CANVAS_WIDTH;
       if (isDuckFinished) {
@@ -62,8 +64,8 @@ const Canvas = () => {
   };
 
   const startRound = () => {
-    setPlay(false);
     y.current = Math.floor(Math.random() * (CANVAS_HEIGHT - DUCK_HEIGHT));
+    render();
 
     startAnimation();
     const roundTimer = setInterval(() => {
@@ -77,6 +79,11 @@ const Canvas = () => {
       }
     }, 1000);
   };
+
+  const handleStartClick = () =>
+    startGame(() => {
+      setPlay(true);
+    });
 
   const hitDuck = () => {
     const isDuckHit =
@@ -114,14 +121,18 @@ const Canvas = () => {
       DUCK_HEIGHT,
     );
 
-    requestAnimationFrame(render);
+    isPlay && requestAnimationFrame(render);
   };
 
   useEffect(() => {
     sprite.current.src = '/duck_hunt_sprite.png';
 
-    render();
+    return () => stopGame();
   }, []);
+
+  useEffect(() => {
+    isPlay && startRound();
+  }, [isPlay]);
 
   return (
     <>
@@ -137,8 +148,8 @@ const Canvas = () => {
         onClick={() => hitDuck()}
       />
       <Stats rounds={rounds} duckHits={duckHits} />
-      {isPlay ? (
-        <Button variant={'contained'} onClick={startRound}>
+      {!isPlay ? (
+        <Button variant={'contained'} onClick={handleStartClick}>
           Start game
         </Button>
       ) : (

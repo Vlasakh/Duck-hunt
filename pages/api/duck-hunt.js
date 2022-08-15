@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { BROADCAST_TEST, INPUT_CHANGE, START_GAME } from '../../common/socketConstants';
+import { DUCK_HUNT_STATISTICS, INIT_GAME, START_GAME } from '../../common/socketConstants';
 
 const SocketHandler = (req, res) => {
   if (res.socket.server.io) {
@@ -12,12 +12,11 @@ const SocketHandler = (req, res) => {
     res.socket.server.io = io;
 
     io.on('connection', (socket) => {
-      setTimeout(() => socket.broadcast.emit(BROADCAST_TEST, 'client connected :)'), 1000);
       console.log('❗connected');
 
-      socket.on(INPUT_CHANGE, (msg) => {
-        // socket.broadcast.emit('update-input', msg)
+      socket.on(INIT_GAME, (msg) => {
         console.log('❗msg', msg);
+        setTimeout(() => socket.emit(START_GAME, 'run'), 1000);
       });
     });
   }

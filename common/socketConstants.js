@@ -1,3 +1,3 @@
-export const INPUT_CHANGE = 'input-change';
+export const INIT_GAME = 'input-change';
 export const START_GAME = 'START_GAME';
-export const BROADCAST_TEST = 'check-broad';
+export const DUCK_HUNT_STATISTICS = 'statistics';

@@ -1,17 +1,15 @@
 import io from 'socket.io-client';
-import { INPUT_CHANGE, START_GAME } from '../../common/socketConstants';
+import { INIT_GAME, START_GAME } from '../../common/socketConstants';
 
 export function useDuckHuntGame() {
   let socket;
 
-  function startGame() {
+  function startGame(startCallback) {
     if (!socket?.connected) {
       if (socket) {
         socket.connect();
       } else {
-        new Promise((res) => {
-          socketInit(res);
-        });
+        socketInit(startCallback);
       }
     }
   }
@@ -22,11 +20,12 @@ export function useDuckHuntGame() {
 
     socket.on('connect', () => {
       console.log('connected');
-      startCallback();
+      socket.emit(INIT_GAME, 'init');
     });
 
-    socket.on(START_GAME, (msg) => {
-      console.log('❗msg', msg);
+    socket.on(START_GAME, () => {
+      console.log('❗on start');
+      startCallback();
     });
   }
 
@@ -38,15 +37,9 @@ export function useDuckHuntGame() {
     console.log('❗socket', socket);
   }
 
-  function handleMessage(e) {
-    socket.emit(INPUT_CHANGE, 'test');
-    console.log('❗test', 'test');
-  }
-
   return {
     socket,
     startGame,
     stopGame,
-    handleMessage,
   };
 }
