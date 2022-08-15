@@ -1,0 +1,25 @@
+.btn  {
+    display: block;
+    margin: 20px auto 0;
+    min-width: 150px;
+    border: none;
+    padding: 10px 15px;
+    background-color: teal;
+    color: #fff;
+    font-weight: 500;
+    font-family: inherit;
+    cursor: pointer;
+    outline: none;
+    box-shadow: 1px 2px 2px 0 rgb(0 0 0 / 0.5);
+    transition: box-shadow 250ms linear;
+  }
+  
+  .btn:active {
+    box-shadow: 2px 5px 2px 0 rgb(0 0 0 / 0.5);
+  }
+
+  .btn--disabled {
+    background: grey;
+    /* padding:6px; */
+  }
+  
