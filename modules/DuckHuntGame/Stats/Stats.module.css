@@ -1,10 +1,10 @@
-.Stats {
+.stats {
   position: absolute;
   right: 20px;
   display: inline-flex;
 }
 
-.Stats__item {
+.stats__item {
   display: flex;
   flex-direction: row;
   margin: 0;

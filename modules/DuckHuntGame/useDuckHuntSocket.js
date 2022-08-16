@@ -1,8 +1,8 @@
 import { useRef } from 'react';
 import io from 'socket.io-client';
-import { DUCK_HUNT_STATISTICS, INIT_GAME, START_GAME } from '../../common/socketConstants';
+import { DUCK_HUNT_STATISTICS, INIT_GAME, START_GAME } from './socketConstants';
 
-export function useDuckHuntGame() {
+export function useDuckHuntSocket() {
   const socket = useRef();
 
   function startGame(startCallback) {

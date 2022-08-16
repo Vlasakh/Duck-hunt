@@ -1,0 +1,10 @@
+.header {
+  text-align: center;
+}
+
+.canvas {
+  display: block;
+  outline: 1px solid teal;
+
+  margin: 20px auto 0;
+}

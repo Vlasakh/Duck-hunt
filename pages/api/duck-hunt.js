@@ -1,5 +1,5 @@
 import { Server } from 'socket.io';
-import { DUCK_HUNT_STATISTICS, INIT_GAME, START_GAME } from '../../common/socketConstants';
+import { DUCK_HUNT_STATISTICS, INIT_GAME, START_GAME } from '../../modules/DuckHuntGame/socketConstants';
 
 const SocketHandler = (req, res) => {
   if (res.socket.server.io) {
